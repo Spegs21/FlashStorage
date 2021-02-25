@@ -74,6 +74,23 @@ class EEPROMClass {
 
     uint16_t length() { return EEPROM_EMULATION_SIZE; }
 
+    template< typename T > T &get( int address, T &t )
+    {
+      if(isValid())
+      {
+        uint8_t *ptr = (uint8_t*) &t;
+        for( int count = sizeof(T) ; count ; --count, ++address )  *ptr++ = _eeprom.data[address];
+      }
+      return t;
+    }
+
+    template< typename T > void put( int address, const T &t )
+    {
+        uint8_t *ptr = (uint8_t*) &t;
+        for( int count = sizeof(T) ; count ; --count, ++address ) update(address, *ptr++);
+        commit();
+    }
+      
   private:
     void init();
 
